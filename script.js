@@ -33,7 +33,7 @@ async function generateQuestion() {
         resultEl.style.display = 'none';
         
         // Make API request
-        const response = await fetch('https://chemquest-b8lk.onrender.com', {
+        const response = await fetch('https://chemquest-b8lk.onrender.com/generate-question', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -114,7 +114,7 @@ async function handleOptionClick(e) {
 // Fetch stats from the backend
 async function fetchStats() {
     try {
-        const response = await fetch('http://localhost:5000/stats', {
+        const response = await fetch('https://chemquest-b8lk.onrender.com/stats', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -134,7 +134,7 @@ async function fetchStats() {
 // Update stats in the backend
 async function updateStats(isCorrect) {
     try {
-        const response = await fetch('http://localhost:5000/update-stats', {
+        const response = await fetch('https://chemquest-b8lk.onrender.com/update-stats', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -176,7 +176,7 @@ function showResult(message, isCorrect) {
 // Check answer with backend (optional, but implemented as per requirements)
 async function checkAnswerWithBackend(userAnswer, correctAnswer) {
     try {
-        const response = await fetch('http://localhost:5000/check-answer', {
+        const response = await fetch('https://chemquest-b8lk.onrender.com/check-answer', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
