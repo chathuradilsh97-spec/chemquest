@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trivia Game</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Trivia Game</h1>
+            <p>Generate random trivia questions and test your knowledge!</p>
+        </header>
+        
+        <main>
+            <div class="game-section">
+                <div id="stats" class="stats">
+                    <h2>Game Stats</h2>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-label">Total Questions:</span>
+                            <span id="total-questions" class="stat-value">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Correct Answers:</span>
+                            <span id="correct-answers" class="stat-value correct">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Wrong Answers:</span>
+                            <span id="wrong-answers" class="stat-value wrong">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Accuracy:</span>
+                            <span id="accuracy" class="stat-value">0%</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <button id="generate-btn" class="btn generate-btn">Generate Question</button>
+                
+                <div id="question-container" class="question-container">
+                    <h2 id="question"></h2>
+                    
+                    <div class="options-container">
+                        <button class="option-btn" data-option="0"></button>
+                        <button class="option-btn" data-option="1"></button>
+                        <button class="option-btn" data-option="2"></button>
+                        <button class="option-btn" data-option="3"></button>
+                    </div>
+                </div>
+                
+                <div id="result" class="result"></div>
+            </div>
+        </main>
+        
+        <footer>
+            <p>Powered by OpenAI API</p>
+        </footer>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
