@@ -171,6 +171,7 @@ function displayStats(stats) {
 function showResult(message, isCorrect) {
     resultEl.textContent = message;
     resultEl.className = `result active ${isCorrect ? 'correct' : 'wrong'}`;
+    resultEl.style.display = 'block';
 }
 
 // Check answer with backend (optional, but implemented as per requirements)
