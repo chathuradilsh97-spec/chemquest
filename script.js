@@ -33,7 +33,7 @@ async function generateQuestion() {
         resultEl.style.display = 'none';
         
         // Make API request
-        const response = await fetch('http://localhost:5000/generate-question', {
+        const response = await fetch('https://chemquest-b8lk.onrender.com', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
