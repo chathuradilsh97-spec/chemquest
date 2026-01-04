@@ -39,42 +39,103 @@ if not os.path.exists(STATS_FILE):
         json.dump({"correct_answers": 0, "wrong_answers": 0, "total_questions": 0}, f, indent=2)
 
 # Function to read stats
-
 def read_stats():
-    with open(STATS_FILE, 'r', encoding='utf-8') as f:
-        return json.load(f)
+    try:
+        print(f"Reading stats from: {STATS_FILE}")
+        print(f"File exists: {os.path.exists(STATS_FILE)}")
+        if os.path.exists(STATS_FILE):
+            with open(STATS_FILE, 'r', encoding='utf-8') as f:
+                stats = json.load(f)
+                print(f"Read stats: {stats}")
+                return stats
+        else:
+            # If file doesn't exist, create default stats
+            default_stats = {"correct_answers": 0, "wrong_answers": 0, "total_questions": 0}
+            print(f"Creating default stats: {default_stats}")
+            write_stats(default_stats)
+            return default_stats
+    except Exception as e:
+        print(f"Error reading stats: {str(e)}")
+        # Return default stats on error
+        return {"correct_answers": 0, "wrong_answers": 0, "total_questions": 0}
 
 # Function to write stats
-
 def write_stats(stats):
-    with open(STATS_FILE, 'w', encoding='utf-8') as f:
-        json.dump(stats, f, indent=2)
+    try:
+        print(f"Writing stats to: {STATS_FILE}")
+        print(f"Stats to write: {stats}")
+        with open(STATS_FILE, 'w', encoding='utf-8') as f:
+            json.dump(stats, f, indent=2)
+        print(f"Stats written successfully")
+        # Verify write was successful
+        with open(STATS_FILE, 'r', encoding='utf-8') as f:
+            verified_stats = json.load(f)
+            print(f"Verified stats: {verified_stats}")
+    except Exception as e:
+        print(f"Error writing stats: {str(e)}")
 
 @app.route('/generate-question', methods=['POST'])
 def generate_question():
     try:
-        # Generate trivia question using OpenAI API
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[
-                {"role": "system", "content": "You are a trivia question generator. Generate a random multiple-choice trivia question with 4 options (A, B, C, D) and indicate the correct answer. Format the response as JSON with keys: 'question', 'options' (list of 4 strings), 'correct_answer' (string). Make sure the options are unique and the correct answer is one of the options. Keep it simple."}
-            ],
-            temperature=0.7,
-            max_tokens=300,
-            timeout=10
-        )
+        # Read existing questions to check for duplicates
+        existing_questions = set()
+        try:
+            with open(CSV_FILE, 'r', newline='', encoding='utf-8') as f:
+                reader = csv.reader(f)
+                next(reader)  # Skip header
+                for row in reader:
+                    if row:
+                        existing_questions.add(row[0].strip().lower())
+            print(f"Loaded {len(existing_questions)} existing questions")
+        except Exception as e:
+            print(f"Error reading existing questions: {str(e)}")
+            existing_questions = set()
         
-        trivia_data = response.choices[0].message.content.strip()
-        print(f"Raw OpenAI response: {trivia_data}")
+        max_attempts = 5
+        attempt = 0
+        trivia_json = None
         
-        # Clean the response by removing markdown backticks and JSON label
-        import re
-        trivia_data = re.sub(r'^```json\n|```$', '', trivia_data.strip())
-        print(f"Cleaned response: {trivia_data}")
+        while attempt < max_attempts:
+            attempt += 1
+            print(f"Attempt {attempt} to generate unique question")
+            
+            # Generate trivia question using OpenAI API
+            response = client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[
+                    {"role": "system", "content": "You are a trivia question generator. Generate a completely unique, random multiple-choice trivia question with 4 distinct options (A, B, C, D) and indicate the correct answer. Ensure this question is different from any standard trivia questions and covers diverse topics. Format the response as JSON with keys: 'question', 'options' (list of 4 strings), 'correct_answer' (string). Make sure all options are unique, plausible, and the correct answer is one of the options. Keep it simple but varied."}
+                ],
+                temperature=0.9,  # Increased temperature for more randomness
+                max_tokens=300,
+                timeout=10
+            )
+            
+            trivia_data = response.choices[0].message.content.strip()
+            print(f"Raw OpenAI response: {trivia_data}")
+            
+            # Clean the response by removing markdown backticks and JSON label
+            import re
+            trivia_data = re.sub(r'^```json\n|```$', '', trivia_data.strip())
+            print(f"Cleaned response: {trivia_data}")
+            
+            # Parse the JSON response
+            import json
+            trivia_json = json.loads(trivia_data)
+            
+            question = trivia_json["question"]
+            
+            # Check if question is duplicate
+            if question.strip().lower() not in existing_questions:
+                print("Generated unique question!")
+                break
+            else:
+                print("Duplicate question found, generating new one...")
         
-        # Parse the JSON response
-        import json
-        trivia_json = json.loads(trivia_data)
+        if not trivia_json:
+            return jsonify({
+                "success": False,
+                "error": "Could not generate a unique question after multiple attempts"
+            })
         
         question = trivia_json["question"]
         options = trivia_json["options"]
