@@ -63,12 +63,43 @@ A simple trivia game with Python backend and HTML/CSS/JS frontend that generates
 │   ├── requirements.txt        # Python dependencies
 │   ├── .env                    # Environment variables (API keys)
 │   └── trivia_questions.csv    # Generated CSV with all questions (created automatically)
-├── frontend/                   # Frontend directory
-│   ├── index.html              # HTML structure
-│   ├── style.css               # CSS styling
-│   └── script.js               # JavaScript for interactions
+├── index.html                  # HTML structure (frontend)
+├── style.css                   # CSS styling (frontend)
+├── script.js                   # JavaScript for interactions (frontend)
 └── README.md                   # This file
 ```
+
+## Deployment
+
+### GitHub Pages (Frontend)
+
+1. Push your code to a GitHub repository
+2. Go to the repository's settings
+3. Navigate to "Pages" in the left sidebar
+4. Under "Build and deployment", select "Source" as "Deploy from a branch"
+5. Choose your main branch and the root directory
+6. Click "Save"
+7. Your frontend will be deployed at `https://<username>.github.io/<repository-name>/`
+
+### Render (Backend)
+
+1. Create a Render account at https://render.com/
+2. Click "New +" > "Web Service"
+3. Connect your GitHub repository
+4. Configure the service:
+   - **Name:** chemquest-backend
+   - **Runtime:** Python 3
+   - **Build Command:** `pip install -r requirements.txt`
+   - **Start Command:** `python app.py`
+   - **Environment Variables:** Add your `OPENAI_API_KEY`
+5. Click "Create Web Service"
+6. Your backend will be deployed at `https://<service-name>.onrender.com`
+
+### Connecting Frontend to Backend
+
+1. Update the backend URL in `script.js`:
+   - Open `script.js`
+   - Replace all instances of `https://chemquest-b8lk.onrender.com` with your Render backend URL
 
 ## Technical Details
 
