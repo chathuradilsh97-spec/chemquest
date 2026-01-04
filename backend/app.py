@@ -25,14 +25,15 @@ client = openai.OpenAI(
 )
 
 # Initialize CSV file
-CSV_FILE = "trivia_questions.csv"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+CSV_FILE = os.path.join(BASE_DIR, "trivia_questions.csv")
 if not os.path.exists(CSV_FILE):
     with open(CSV_FILE, 'w', newline='', encoding='utf-8') as f:
         writer = csv.writer(f)
         writer.writerow(["Question", "Option A", "Option B", "Option C", "Option D", "Correct Answer"])
 
 # Initialize stats file
-STATS_FILE = "stats.json"
+STATS_FILE = os.path.join(BASE_DIR, "stats.json")
 if not os.path.exists(STATS_FILE):
     with open(STATS_FILE, 'w', encoding='utf-8') as f:
         json.dump({"correct_answers": 0, "wrong_answers": 0, "total_questions": 0}, f, indent=2)
